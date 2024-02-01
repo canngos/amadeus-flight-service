@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class FeignDto {
+    private String flightNumber;
     private String departureAirport;
     private String arrivalAirport;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")

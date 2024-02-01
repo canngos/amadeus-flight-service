@@ -44,6 +44,15 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public DefaultMessageResponse addFlight(FlightRequest flightRequest) {
+        Optional<Flight> flightOptional = flightRepository.findByFlightNumberAndDepartureTime(
+                flightRequest.getFlightNumber(),
+                flightRequest.getDepartureTime()
+        );
+
+        if (flightOptional.isPresent()) {
+            throw new BusinessException(TransactionCode.FLIGHT_ALREADY_EXISTS);
+        }
+
         List<Airport> airports = checkAirports(flightRequest.getDepartureAirport(), flightRequest.getArrivalAirport());
 
         Flight flight = new Flight();

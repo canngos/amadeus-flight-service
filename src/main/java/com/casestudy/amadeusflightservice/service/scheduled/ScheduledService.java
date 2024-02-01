@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +27,30 @@ public class ScheduledService {
     public void pullData() {
         log.info("Pulling data from mockapi");
         List<FeignDto> flights = feignDataPullService.getFlights();
+        LocalDateTime now = LocalDateTime.now();
 
         flights.forEach(feignDto -> {
-            List<Airport> airports = checkAirports(feignDto);
+            // if the departure time is before today's date, then skip
+            if (feignDto.getDepartureTime().isBefore(now)) {
+                return;
+            }
 
-            Flight flight = new Flight();
-            flight.setDepartureAirport(airports.get(0));
-            flight.setArrivalAirport(airports.get(1));
-            flight.setDepartureTime(feignDto.getDepartureTime());
-            flight.setArrivalTime(feignDto.getArrivalTime());
-            flight.setPrice(feignDto.getPrice());
-            flightRepository.save(flight);
+            Optional<Flight> flightOptional = flightRepository.findByFlightNumberAndDepartureTime(
+                    feignDto.getFlightNumber(),
+                    feignDto.getDepartureTime()
+            );
+
+            if (flightOptional.isEmpty()) {
+                List<Airport> airports = checkAirports(feignDto);
+
+                Flight flight = new Flight();
+                flight.setDepartureAirport(airports.get(0));
+                flight.setArrivalAirport(airports.get(1));
+                flight.setDepartureTime(feignDto.getDepartureTime());
+                flight.setArrivalTime(feignDto.getArrivalTime());
+                flight.setPrice(feignDto.getPrice());
+                flightRepository.save(flight);
+            }
         });
         log.info("Data pulled successfully");
     }

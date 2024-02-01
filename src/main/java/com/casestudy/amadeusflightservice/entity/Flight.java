@@ -20,6 +20,7 @@ public class Flight {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flight_generator")
     @SequenceGenerator(name = "flight_generator", sequenceName = "flight_seq", initialValue = 20)
     private Long id;
+    private String flightNumber;
     @ManyToOne
     private Airport departureAirport;
     @ManyToOne

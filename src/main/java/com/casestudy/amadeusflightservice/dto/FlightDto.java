@@ -14,6 +14,7 @@ import java.util.List;
 public class FlightDto {
 
     private Long id;
+    private String flightNumber;
     private String departureAirport;
     private String arrivalAirport;
     private LocalDateTime departureTime;
