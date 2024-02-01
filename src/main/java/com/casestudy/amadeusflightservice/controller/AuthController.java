@@ -5,6 +5,8 @@ import com.casestudy.amadeusflightservice.request.RegisterRequest;
 import com.casestudy.amadeusflightservice.response.DefaultMessageResponse;
 import com.casestudy.amadeusflightservice.response.LoginResponse;
 import com.casestudy.amadeusflightservice.service.AuthService;
+import com.casestudy.amadeusflightservice.util.SwaggerConstants;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +23,14 @@ public class AuthController {
 
     private final AuthService authService;
 
-
     @PostMapping("/login")
+    @Operation(summary = SwaggerConstants.LOGIN_SUMMARY, description = SwaggerConstants.LOGIN_DESCRIPTION)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/register")
+    @Operation(summary = SwaggerConstants.REGISTER_SUMMARY, description = SwaggerConstants.REGISTER_DESCRIPTION)
     public ResponseEntity<DefaultMessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.CREATED);
     }

@@ -2,6 +2,8 @@ package com.casestudy.amadeusflightservice.controller;
 
 import com.casestudy.amadeusflightservice.response.FlightResponse;
 import com.casestudy.amadeusflightservice.service.SearchService;
+import com.casestudy.amadeusflightservice.util.SwaggerConstants;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SearchController {
 
     private final SearchService searchService;
+    private static final String AUTHORIZATION = "Authorization";
+    // Token is not used but provided because it is required to show in Swagger UI
 
     @GetMapping("/default")
+    @Operation(summary = SwaggerConstants.SEARCH_FLIGHTS_SUMMARY, description = SwaggerConstants.SEARCH_FLIGHTS_DESCRIPTION)
     public ResponseEntity<FlightResponse> searchFlights(@RequestParam("departureAirport") String departureAirport,
                                                         @RequestParam("arrivalAirport") String arrivalAirport,
                                                         @RequestParam("departureDate") String departureDate,
@@ -33,6 +38,7 @@ public class SearchController {
     }
 
     @GetMapping("/city")
+    @Operation(summary = SwaggerConstants.SEARCH_FLIGHTS_BY_CITY_SUMMARY, description = SwaggerConstants.SEARCH_FLIGHTS_BY_CITY_DESCRIPTION)
     public ResponseEntity<FlightResponse> searchFlightsByCity(@RequestParam("departureCity") String departureCity,
                                                         @RequestParam("arrivalCity") String arrivalCity,
                                                         @RequestParam("departureDate") String departureDate,
