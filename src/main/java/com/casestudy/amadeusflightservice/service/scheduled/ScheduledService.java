@@ -17,6 +17,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+
+/*
+    * This class is used to pull data from mockapi.io and save it to the database.
+    * It is scheduled to run every day at 12 AM.
+    * It checks if the flight already exists in the database, if not, it saves it.
+    * It also checks if the airports already exist in the database, if not, it saves a new airport.
+    * My mock api url is: https://65ba0cd5b4d53c066551eb64.mockapi.io/mockapi/v1/flights
+    * Currently, there are 3 flights in the mock api.
+ */
+
 public class ScheduledService {
 
     private final FeignDataPullService feignDataPullService;
