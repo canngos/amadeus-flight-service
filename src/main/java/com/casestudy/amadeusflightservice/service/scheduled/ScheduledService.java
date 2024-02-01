@@ -44,6 +44,7 @@ public class ScheduledService {
                 List<Airport> airports = checkAirports(feignDto);
 
                 Flight flight = new Flight();
+                flight.setFlightNumber(feignDto.getFlightNumber());
                 flight.setDepartureAirport(airports.get(0));
                 flight.setArrivalAirport(airports.get(1));
                 flight.setDepartureTime(feignDto.getDepartureTime());
