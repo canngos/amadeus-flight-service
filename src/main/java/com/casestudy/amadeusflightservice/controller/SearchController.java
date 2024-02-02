@@ -4,13 +4,12 @@ import com.casestudy.amadeusflightservice.response.FlightResponse;
 import com.casestudy.amadeusflightservice.service.SearchService;
 import com.casestudy.amadeusflightservice.util.SwaggerConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -24,7 +23,8 @@ public class SearchController {
 
     @GetMapping("/default")
     @Operation(summary = SwaggerConstants.SEARCH_FLIGHTS_SUMMARY, description = SwaggerConstants.SEARCH_FLIGHTS_DESCRIPTION)
-    public ResponseEntity<FlightResponse> searchFlights(@RequestParam("departureAirport") String departureAirport,
+    public ResponseEntity<FlightResponse> searchFlights(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token,
+                                                        @RequestParam("departureAirport") String departureAirport,
                                                         @RequestParam("arrivalAirport") String arrivalAirport,
                                                         @RequestParam("departureDate") String departureDate,
                                                         @RequestParam(value = "returnDate", required = false) String returnDate) {
@@ -39,10 +39,11 @@ public class SearchController {
 
     @GetMapping("/city")
     @Operation(summary = SwaggerConstants.SEARCH_FLIGHTS_BY_CITY_SUMMARY, description = SwaggerConstants.SEARCH_FLIGHTS_BY_CITY_DESCRIPTION)
-    public ResponseEntity<FlightResponse> searchFlightsByCity(@RequestParam("departureCity") String departureCity,
-                                                        @RequestParam("arrivalCity") String arrivalCity,
-                                                        @RequestParam("departureDate") String departureDate,
-                                                        @RequestParam(value = "returnDate", required = false) String returnDate) {
+    public ResponseEntity<FlightResponse> searchFlightsByCity(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token,
+                                                              @RequestParam("departureCity") String departureCity,
+                                                              @RequestParam("arrivalCity") String arrivalCity,
+                                                              @RequestParam("departureDate") String departureDate,
+                                                              @RequestParam(value = "returnDate", required = false) String returnDate) {
 
         if (returnDate.isBlank()) {
             return new ResponseEntity<>(searchService.searchFlightsByCity(departureCity, arrivalCity, departureDate), HttpStatus.OK);
