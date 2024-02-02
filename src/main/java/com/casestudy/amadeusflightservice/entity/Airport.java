@@ -17,10 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 public class Airport {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flight_generator")
-    @SequenceGenerator(name = "flight_generator", sequenceName = "flight_seq", initialValue = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "airport_generator")
+    @SequenceGenerator(name = "airport_generator", sequenceName = "airport_seq", initialValue = 20)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(nullable = false)
     private String city;
     @CreationTimestamp
     private LocalDateTime createdAt;

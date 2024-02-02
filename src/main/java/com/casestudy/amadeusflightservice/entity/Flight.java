@@ -20,13 +20,17 @@ public class Flight {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flight_generator")
     @SequenceGenerator(name = "flight_generator", sequenceName = "flight_seq", initialValue = 20)
     private Long id;
+    @Column(nullable = false)
     private String flightNumber;
     @ManyToOne
     private Airport departureAirport;
     @ManyToOne
     private Airport arrivalAirport;
+    @Column(nullable = false)
     private LocalDateTime departureTime;
+    @Column(nullable = false)
     private LocalDateTime arrivalTime;
+    @Column(nullable = false)
     private BigDecimal price;
     @CreationTimestamp
     private LocalDateTime createdAt;
