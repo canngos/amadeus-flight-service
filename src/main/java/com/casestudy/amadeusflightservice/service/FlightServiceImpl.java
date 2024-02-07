@@ -70,14 +70,10 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public DefaultMessageResponse updateFlight(Long id, FlightRequest flightRequest) {
-        Optional<Flight> flightOptional = flightRepository.findById(id);
-        if (flightOptional.isEmpty()) {
-            throw new BusinessException(TransactionCode.FLIGHT_NOT_FOUND);
-        }
+        Flight flight = checkFlight(id);
 
         List<Airport> airports = checkAirports(flightRequest.getDepartureAirport(), flightRequest.getArrivalAirport());
 
-        Flight flight = flightOptional.get();
         BeanUtils.copyProperties(flightRequest, flight);
         flight.setDepartureAirport(airports.get(0));
         flight.setArrivalAirport(airports.get(1));
@@ -92,11 +88,9 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public DefaultMessageResponse deleteFlight(Long id) {
-        Optional<Flight> flightOptional = flightRepository.findById(id);
-        if (flightOptional.isEmpty()) {
-            throw new BusinessException(TransactionCode.FLIGHT_NOT_FOUND);
-        }
-        flightRepository.deleteById(id);
+        Flight flight = checkFlight(id);
+        
+        flightRepository.delete(flight);
 
         DefaultMessageResponse defaultMessageResponse = new DefaultMessageResponse();
         DefaultMessageBody body = new DefaultMessageBody("Flight deleted successfully");
@@ -110,11 +104,22 @@ public class FlightServiceImpl implements FlightService {
             throw new BusinessException(TransactionCode.SAME_AIRPORTS);
         }
 
-        Airport departure = airportRepository.findById(departureAirport)
-                    .orElseThrow(() -> new BusinessException(TransactionCode.AIRPORT_NOT_FOUND));
-        Airport arrival = airportRepository.findById(arrivalAirport)
-                    .orElseThrow(() -> new BusinessException(TransactionCode.AIRPORT_NOT_FOUND));
+        Airport departure = checkAirport(departureAirport);
+        Airport arrival = checkAirport(arrivalAirport);
 
         return List.of(departure, arrival);
+    }
+
+    private Airport checkAirport(Long airport) {
+        return airportRepository.findById(airport)
+                    .orElseThrow(() -> new BusinessException(TransactionCode.AIRPORT_NOT_FOUND));
+    }
+
+    private Flight checkFlight(Long id) {
+        Optional<Flight> flightOptional = flightRepository.findById(id);
+        if (flightOptional.isEmpty()) {
+            throw new BusinessException(TransactionCode.FLIGHT_NOT_FOUND);
+        }
+        return flightOptional.get();
     }
 }

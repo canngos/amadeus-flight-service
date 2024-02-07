@@ -100,13 +100,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     private List<Flight> filterFlightsByDepartureDate(List<Flight> flights, String departureDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate depDate;
-        try {
-            depDate = LocalDate.parse(departureDate, formatter);
-        } catch (Exception e) {
-            throw new BusinessException(TransactionCode.INVALID_DATE_FORMAT);
-        }
+        LocalDate depDate = parseDate(departureDate);
         return flights.stream()
                 .filter(flight -> {
                     LocalDate formattedDepartureTime = flight.getDepartureTime().toLocalDate();
@@ -114,6 +108,17 @@ public class SearchServiceImpl implements SearchService {
                 })
                 .sorted(Comparator.comparing(Flight::getDepartureTime))
                 .toList();
+    }
+
+    private static LocalDate parseDate(String departureDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate depDate;
+        try {
+            depDate = LocalDate.parse(departureDate, formatter);
+        } catch (Exception e) {
+            throw new BusinessException(TransactionCode.INVALID_DATE_FORMAT);
+        }
+        return depDate;
     }
 
     private List<FlightDto> getFlights(String departureDate, List<Airport> departureAirports, List<Airport> arrivalAirports) {

@@ -34,18 +34,9 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
-        Optional<Customer> customerOptional = customerRepository.findByEmail(email);
+        Customer customer = checkCustomer(email);
 
-        if (customerOptional.isEmpty()) {
-            throw new BusinessException(TransactionCode.USER_NOT_FOUND);
-        }
-
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        } catch (BadCredentialsException e) {
-            throw new BusinessException(TransactionCode.INVALID_CREDENTIALS);
-        }
-        Customer customer = customerOptional.get();
+        authenticateCustomer(email, password);
         String token = jwtService.generateToken(customer);
         Date expirationDate = jwtService.extractExpiration(token);
 
@@ -76,5 +67,22 @@ public class AuthServiceImpl implements AuthService {
         response.setBody(new BaseBody<>(body));
         response.setStatus(new Status(TransactionCode.SUCCESS));
         return response;
+    }
+
+    private Customer checkCustomer(String email) {
+        Optional<Customer> customerOptional = customerRepository.findByEmail(email);
+
+        if (customerOptional.isEmpty()) {
+            throw new BusinessException(TransactionCode.USER_NOT_FOUND);
+        }
+        return customerOptional.get();
+    }
+
+    private void authenticateCustomer(String email, String password) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        } catch (BadCredentialsException e) {
+            throw new BusinessException(TransactionCode.INVALID_CREDENTIALS);
+        }
     }
 }
